@@ -10,38 +10,45 @@ iris = load_iris()
 X = iris.data
 y = iris.target
 
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
 # Train a Random Forest classifier
 clf = RandomForestClassifier(n_estimators=100, random_state=42)
-clf.fit(X, y)
+clf.fit(X_train, y_train)
 
-# Sidebar for user input
-st.sidebar.header('User Input')
-sepal_length = st.sidebar.slider("Sepal length", 4.0, 8.0, 5.0)
-sepal_width = st.sidebar.slider("Sepal width", 2.0, 4.5, 3.0)
-petal_length = st.sidebar.slider("Petal length", 1.0, 7.0, 4.0)
-petal_width = st.sidebar.slider("Petal width", 0.1, 2.5, 1.0)
+# Make predictions on the test set
+y_pred = clf.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+st.write(f"Model Accuracy: {accuracy:.2f}")
 
-# Make prediction
 def predict_species(sepal_length, sepal_width, petal_length, petal_width):
+    # Create a DataFrame with the input features
     data = pd.DataFrame({
         'sepal_length': [sepal_length],
         'sepal_width': [sepal_width],
         'petal_length': [petal_length],
         'petal_width': [petal_width]
     })
+
+    # Make prediction
     prediction = clf.predict(data)
-    return prediction
+    predicted_species = iris.target_names[prediction[0]]
+    return predicted_species
 
-# Display prediction
-st.title("Iris Flower Species Prediction")
-st.write("## Input Features")
-st.write(f"Sepal length: {sepal_length}")
-st.write(f"Sepal width: {sepal_width}")
-st.write(f"Petal length: {petal_length}")
-st.write(f"Petal width: {petal_width}")
+def main():
+    st.title("Iris Flower Species Prediction")
+    
+    # Add inputs for features
+    sepal_length = st.slider("Sepal length", 4.0, 8.0, 5.0)
+    sepal_width = st.slider("Sepal width", 2.0, 4.5, 3.0)
+    petal_length = st.slider("Petal length", 1.0, 7.0, 4.0)
+    petal_width = st.slider("Petal width", 0.1, 2.5, 1.0)
+    
+    # Predict the species
+    if st.button("Predict"):
+        species_prediction = predict_species(sepal_length, sepal_width, petal_length, petal_width)
+        st.write(f"Predicted species: {species_prediction}")
 
-if st.button("Predict"):
-    prediction = predict_species(sepal_length, sepal_width, petal_length, petal_width)
-    species = iris.target_names[prediction[0]]
-    st.write("## Prediction")
-    st.write(f"The predicted species is: {species}")
+if __name__ == "__main__":
+    main()
