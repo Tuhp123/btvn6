@@ -1,5 +1,6 @@
 # btvn6
 Các bước để deploy app trên streamlit cloud
+
 Bước 1: Truy cập vào địa chỉ streamlit cloud: https://streamlit.io/cloud
 
 Bước 2: Đăng nhập vào streamlit
